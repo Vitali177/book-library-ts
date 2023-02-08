@@ -16,21 +16,23 @@ type BookWrite = {
   authorId: number;
 };
 
-export const listBooks = async (): Promise<BookRead[]> => {
-  return db.book.findMany({
+const SELECT_FOR_BOOK_READ = {
+  id: true,
+  title: true,
+  datePublished: true,
+  isFiction: true,
+  author: {
     select: {
       id: true,
-      title: true,
-      datePublished: true,
-      isFiction: true,
-      author: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true
-        }
-      }
+      firstName: true,
+      lastName: true
     }
+  }
+};
+
+export const listBooks = async (): Promise<BookRead[]> => {
+  return db.book.findMany({
+    select: SELECT_FOR_BOOK_READ
   });
 };
 
@@ -39,19 +41,7 @@ export const getBook = async (id: number): Promise<BookRead | null> => {
     where: {
       id
     },
-    select: {
-      id: true,
-      title: true,
-      datePublished: true,
-      isFiction: true,
-      author: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true
-        }
-      }
-    }
+    select: SELECT_FOR_BOOK_READ
   });
 };
 
@@ -66,18 +56,22 @@ export const createBook = async (book: BookWrite): Promise<BookRead> => {
       datePublished: parsedDate,
       isFiction
     },
-    select: {
-      id: true,
-      title: true,
-      datePublished: true,
-      isFiction: true,
-      author: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true
-        }
-      }
-    }
+    select: SELECT_FOR_BOOK_READ
+  });
+};
+
+export const updateBook = async (book: BookWrite, id: number): Promise<BookRead> => {
+  const { title, authorId, datePublished, isFiction } = book;
+  return db.book.update({
+    where: {
+      id
+    },
+    data: {
+      title,
+      authorId,
+      datePublished,
+      isFiction
+    },
+    select: SELECT_FOR_BOOK_READ
   });
 };
