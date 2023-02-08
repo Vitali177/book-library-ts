@@ -75,3 +75,11 @@ export const updateBook = async (book: BookWrite, id: number): Promise<BookRead>
     select: SELECT_FOR_BOOK_READ
   });
 };
+
+export const deleteBook = async (id: number): Promise<void> => {
+  await db.book.delete({
+    where: {
+      id
+    }
+  });
+};
