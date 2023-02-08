@@ -75,3 +75,15 @@ bookRouter.put(
       return response.status(500).json(error.message);
     }
   });
+
+// DELETE: Delete a Book based on the id
+bookRouter.delete('/:id', async (request: Request, response: Response) => {
+  const id: number = parseInt(request.params.id, 10);
+
+  try {
+    await BookService.deleteBook(id);
+    return response.status(204).json('Book has been successfully deleted');
+  } catch (error: any) {
+    return response.status(500).json(error.message);
+  }
+});
